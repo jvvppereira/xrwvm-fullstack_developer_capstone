@@ -1,4 +1,4 @@
-/*jshint esversion: 8 */
+/* jshint esversion: 8, -W033 */
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
