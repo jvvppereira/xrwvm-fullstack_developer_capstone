@@ -74,30 +74,43 @@ xrwvm-fullstack_developer_capstone/
 └── README.md
 ```
 
-## Architecture Flow Diagrams
+## Architecture Sequence Diagrams
 
-### 1. Get Dealer Reviews Flow
+### 1. Get Dealer Reviews Sequence
 ```mermaid
-flowchart TD
-    A["Browser / React Frontend"] -->|GET /api/reviews/dealer/:id| B["Django Main App - port 8000"]
-    B -->|GET /fetchReviews/dealer/:id| C["Database Microservice - port 3030"]
-    C -->|Query MongoDB| D[("MongoDB - Reviews Collection")]
-    D -->|Return reviews| C
-    C -->|JSON reviews| B
-    B -->|For each review: GET /analyze/<text>| E["Sentiment Analysis - port 5050"]
-    E -->|VADER sentiment| B
-    B -->|Enrich reviews with sentiment| A
+sequenceDiagram
+    participant FE as Browser / React Frontend
+    participant DJ as Django Main App (8000)
+    participant DB as Database Microservice (3030)
+    participant MDB as MongoDB (Reviews)
+    participant SA as Sentiment Analysis (5050)
+
+    FE->>DJ: GET /api/reviews/dealer/:id
+    DJ->>DB: GET /fetchReviews/dealer/:id
+    DB->>MDB: Query reviews
+    MDB-->>DB: Reviews data
+    DB-->>DJ: JSON reviews
+    loop For each review
+        DJ->>SA: GET /analyze/<reviewText>
+        SA-->>DJ: {"sentiment": "positive|negative|neutral"}
+    end
+    DJ-->>FE: Enriched reviews with sentiment
 ```
 
-### 2. Search Car Inventory Flow
+### 2. Search Car Inventory Sequence
 ```mermaid
-flowchart TD
-    A["Browser / React Frontend"] -->|GET /api/inventory/:dealerId?filters| B["Django Main App - port 8000"]
-    B -->|Build endpoint + query params| C["Cars Inventory Microservice - port 3050"]
-    C -->|Query MongoDB with filters| D[("MongoDB - Car Records")]
-    D -->|Return filtered cars| C
-    C -->|JSON cars| B
-    B -->|Return to frontend| A
+sequenceDiagram
+    participant FE as Browser / React Frontend
+    participant DJ as Django Main App (8000)
+    participant CI as Cars Inventory Microservice (3050)
+    participant MDB as MongoDB (Car Records)
+
+    FE->>DJ: GET /api/inventory/:dealerId?filters
+    DJ->>CI: GET /cars... with query params
+    CI->>MDB: Query with filters (year, make, model, mileage, price)
+    MDB-->>CI: Filtered car records
+    CI-->>DJ: JSON cars
+    DJ-->>FE: Car list
 ```
 
 ---
