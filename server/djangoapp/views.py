@@ -16,7 +16,7 @@ from .restapis import (
     get_request,
     analyze_review_sentiments,
     post_review,
-    searchcars_request
+    searchcars_request,
 )
 
 logger = logging.getLogger(__name__)
