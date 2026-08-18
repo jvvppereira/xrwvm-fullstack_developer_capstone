@@ -1,4 +1,4 @@
-/* jshint esversion: 8, -W033 */
+/* jshint ignore:start */
 
 import LoginPanel from "./components/Login/Login";
 import Register from "./components/Register/Register";
