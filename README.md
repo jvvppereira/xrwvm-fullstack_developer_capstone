@@ -74,6 +74,34 @@ xrwvm-fullstack_developer_capstone/
 └── README.md
 ```
 
+## Architecture Flow Diagrams
+
+### 1. Get Dealer Reviews Flow
+```mermaid
+flowchart TD
+    A["Browser / React Frontend"] -->|GET /api/reviews/dealer/:id| B["Django Main App - port 8000"]
+    B -->|GET /fetchReviews/dealer/:id| C["Database Microservice - port 3030"]
+    C -->|Query MongoDB| D[("MongoDB - Reviews Collection")]
+    D -->|Return reviews| C
+    C -->|JSON reviews| B
+    B -->|For each review: GET /analyze/<text>| E["Sentiment Analysis - port 5050"]
+    E -->|VADER sentiment| B
+    B -->|Enrich reviews with sentiment| A
+```
+
+### 2. Search Car Inventory Flow
+```mermaid
+flowchart TD
+    A["Browser / React Frontend"] -->|GET /api/inventory/:dealerId?filters| B["Django Main App - port 8000"]
+    B -->|Build endpoint + query params| C["Cars Inventory Microservice - port 3050"]
+    C -->|Query MongoDB with filters| D[("MongoDB - Car Records")]
+    D -->|Return filtered cars| C
+    C -->|JSON cars| B
+    B -->|Return to frontend| A
+```
+
+---
+
 ## Services Breakdown
 
 ### 1. Django Main App (`server/`)
